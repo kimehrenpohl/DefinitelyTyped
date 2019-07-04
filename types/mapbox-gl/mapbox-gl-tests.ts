@@ -50,7 +50,8 @@ map.on('load', function(){
 		"type": "symbol",
 		"source": "data",
 		"layout": {
-			"icon-image": "marker-15"
+			"icon-image": "marker-15",
+			"text-field": ['get', 'property']
 		}
 	});
 
@@ -406,6 +407,7 @@ attributionControl.on('click', () => {});
 declare var lnglat: mapboxgl.LngLat;
 declare var lnglatlike: mapboxgl.LngLatLike;
 declare var lnglatboundslike: mapboxgl.LngLatBoundsLike;
+declare var mercatorcoordinate: mapboxgl.MercatorCoordinate;
 declare var pointlike: mapboxgl.PointLike;
 
 function expectType<T>(value: T) { /* let the compiler handle things */ }
@@ -417,6 +419,7 @@ function expectType<T>(value: T) { /* let the compiler handle things */ }
 expectType<mapboxgl.LngLatLike>(new mapboxgl.LngLat(0, 0));
 expectType<mapboxgl.LngLatLike>([0, 0]);
 expectType<mapboxgl.LngLatLike>({ lng: 0, lat: 0 });
+expectType<mapboxgl.LngLatLike>({ lon: 0, lat: 0 });
 
 /*
  * LngLat
@@ -459,15 +462,26 @@ new mapboxgl.Point(0, 0);
 expectType<mapboxgl.Point>(mapboxgl.Point.convert(pointlike));
 
 /*
+ * MercatorCoordinate
+ */
+
+new mapboxgl.MercatorCoordinate(0, 0);
+new mapboxgl.MercatorCoordinate(0, 0, 0);
+expectType<number>(mercatorcoordinate.toAltitude());
+expectType<mapboxgl.LngLat>(mercatorcoordinate.toLngLat());
+expectType<mapboxgl.MercatorCoordinate>(mapboxgl.MercatorCoordinate.fromLngLat(lnglatlike));
+expectType<mapboxgl.MercatorCoordinate>(mapboxgl.MercatorCoordinate.fromLngLat(lnglatlike, 0));
+
+/*
  * TransformRequestFunction
  */
 
 expectType<mapboxgl.TransformRequestFunction>((url: string) => ({ url }));
 expectType<mapboxgl.TransformRequestFunction>((url: string, resourceType: mapboxgl.ResourceType) => ({
-	 url,
-	 credentials: 'same-origin',
-	 headers: { 'Accept-Encoding': 'compress' },
-	 method: 'POST',
+	url,
+	credentials: 'same-origin',
+	headers: { 'Accept-Encoding': 'compress' },
+	method: 'POST',
 	collectResourceTiming: true,
  }));
 
@@ -496,8 +510,8 @@ let cameraForBoundsOpts: mapboxgl.CameraForBoundsOptions = {
 	...cameraOpts,
 }
 
-expectType<mapboxgl.CameraOptions | undefined>(map.cameraForBounds(lnglatboundslike));
-expectType<mapboxgl.CameraOptions | undefined>(map.cameraForBounds(lnglatboundslike, cameraForBoundsOpts));
+expectType<mapboxgl.CameraForBoundsResult | undefined>(map.cameraForBounds(lnglatboundslike));
+expectType<mapboxgl.CameraForBoundsResult | undefined>(map.cameraForBounds(lnglatboundslike, cameraForBoundsOpts));
 
 expectType<mapboxgl.Map>(map.fitScreenCoordinates([0, 0], pointlike, 1));
 expectType<mapboxgl.Map>(map.fitScreenCoordinates([0, 0], pointlike, 1, cameraOpts));
@@ -787,3 +801,15 @@ expectType<mapboxgl.Map>(map.on('touchcancel', 'text', (ev) => {
 	expectType<mapboxgl.MapLayerTouchEvent>(ev);
 	expectType<mapboxgl.MapboxGeoJSONFeature[] | undefined>(ev.features);
 }));
+
+/*
+ * Expression
+ */
+expectType<mapboxgl.Expression>(['id']);
+expectType<mapboxgl.Expression>(['get', 'property']);
+expectType<mapboxgl.Expression>([
+	'format',
+	['concat', ['get', 'name'], '\n'], {},
+	['concat', ['get', 'area'], 'foobar', { 'font-scale': 0.8 }]
+]);
+expectType<mapboxgl.Expression>(['coalesce', ['get', 'property'], ['get', 'property']]);

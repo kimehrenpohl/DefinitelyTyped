@@ -27,9 +27,10 @@ const connection2: Promise<mongoose.Mongoose> = mongoose.connect(connectUri, {
   bufferCommands: false,
   useNewUrlParser: true,
   useFindAndModify: true,
-  useCreateIndex: true
+  useCreateIndex: true,
+  autoIndex: true
 });
-const connection3: null = mongoose.connect(connectUri, function (error) {
+const connection3 = mongoose.connect(connectUri, function (error) {
   error.stack;
 });
 
@@ -40,14 +41,16 @@ mongoose.createConnection(connectUri).then((conn)=> {
   return conn.collections;
 }, () => {
 
+var connections: mongoose.Connection[] = mongoose.connections;
+
 });
-mongoose.createConnection(connectUri).open('');
+mongoose.createConnection(connectUri).openUri('');
 mongoose.createConnection(connectUri, {
   db: {
     native_parser: true
   }
-}).open('');
-const dcWithCallback: null = mongoose.disconnect(cb);
+}).openUri('');
+const dcWithCallback: void = mongoose.disconnect(cb);
 const dcPromise: Promise<void> = mongoose.disconnect();
 mongoose.get('test');
 mongoose.model('Actor', new mongoose.Schema({
@@ -123,28 +126,13 @@ coll2.indexExists;
  */
 var conn1: mongoose.Connection = mongoose.createConnection('mongodb://user:pass@localhost:port/database');
 conn1 = new mongoose.Connection(mongoose);
-conn1.open('mongodb://localhost/test', 'myDb', 27017, {
-  replset: null,
-  config: {
-    autoIndex: false
-  }
-}, function (err) {}).open('');
-conn1.openSet('mongodb://localhost/test', 'db', {
-  replset: null,
-  mongos: true
-}, function (err) {}).then(cb).catch(cb);
-conn1.openUri('mongodb://localhost/test', 'myDb', 27017, {
-  replset: null,
-  config: {
-    autoIndex: false
-  }
-}, function (err) {}).open('');
 conn1.close().then(function () {}).catch(function (err) {});
 conn1.close(true).then(function () {}).catch(function (err) {});
 conn1.close(function (err) {});
 conn1.close(true, function (err) {});
 conn1.collection('name').$format(999);
 conn1.model('myModel', new mongoose.Schema({}), 'myCol').find();
+conn1.deleteModel('myModel');
 conn1.models.myModel.findOne().exec();
 interface IStatics {
   staticMethod1: (a: number) => string;
@@ -171,9 +159,9 @@ const getDB = async (tenant: string)=> {
  * http://mongoosejs.com/docs/api.html#error-js
  */
 var mongooseError: mongoose.Error = new mongoose.Error('error');
+mongooseError.name;
 /* inherited properties */
 mongooseError.message;
-mongooseError.name;
 mongooseError.stack;
 /* static properties */
 mongoose.Error.messages.hasOwnProperty('');
@@ -184,21 +172,22 @@ mongoose.Error.Messages.hasOwnProperty('');
  * https://mongoosejs.com/docs/api.html#mongooseerror_MongooseError.CastError
  */
 var castError: mongoose.Error.CastError = new mongoose.Error.CastError('', '', '');
-castError.setModel('foo');
+castError.name;
 castError.stringValue;
 castError.kind;
 castError.path;
 castError.value;
+castError.setModel('foo');
 /* inherited properties */
-castError.name;
-castError.stack;
 castError.message;
+castError.stack;
 
 /*
  * section error/validator.js
  * https://mongoosejs.com/docs/api.html#mongooseerror_MongooseError.ValidatorError
  */
-var validatorError: mongoose.Error.ValidatorError = new mongoose.Error.ValidatorError({ foo: 'bar' })
+var validatorError: mongoose.Error.ValidatorError = new mongoose.Error.ValidatorError({ message: 'bar' })
+validatorError.name;
 validatorError.properties;
 validatorError.kind;
 validatorError.path;
@@ -207,9 +196,8 @@ validatorError.toString().toLowerCase();
 validatorError.formatMessage('foo', {});
 validatorError.formatMessage('foo', (bar: any)=>{ return bar; });
 /* inherited properties */
-validatorError.name;
-validatorError.stack;
 validatorError.message;
+validatorError.stack;
 
 /*
  * section error/validation.js
@@ -217,54 +205,54 @@ validatorError.message;
  */
 var doc = <mongoose.MongooseDocument> {};
 var validationError: mongoose.Error.ValidationError = new mongoose.Error.ValidationError(doc);
+validationError.name;
 validationError.toString().toLowerCase();
 validationError.inspect();
 validationError.toJSON().hasOwnProperty('');
 validationError.addError('foo', validatorError)
 /* inherited properties */
-validationError.name;
-validationError.stack;
 validationError.message;
+validationError.stack;
 
 /*
  * section error/parallelSave.js
  * https://mongoosejs.com/docs/api.html#mongooseerror_MongooseError.ParallelSaveError
  */
 var parallelSaveError: mongoose.Error.ParallelSaveError = new mongoose.Error.ParallelSaveError(doc);
-/* inherited properties */
 parallelSaveError.name;
-parallelSaveError.stack;
+/* inherited properties */
 parallelSaveError.message;
+parallelSaveError.stack;
 
 /*
  * section error/overwriteModel.js
  * https://mongoosejs.com/docs/api.html#mongooseerror_MongooseError.OverwriteModelError
  */
 var overwriteModelError: mongoose.Error.OverwriteModelError = new mongoose.Error.OverwriteModelError('foo');
-/* inherited properties */
 overwriteModelError.name;
-overwriteModelError.stack;
+/* inherited properties */
 overwriteModelError.message;
+overwriteModelError.stack;
 
 /*
  * section error/missingSchema.js
  * https://mongoosejs.com/docs/api.html#mongooseerror_MongooseError.MissingSchemaError
  */
 var missingSchemaError: mongoose.Error.MissingSchemaError = new mongoose.Error.MissingSchemaError('foo');
-/* inherited properties */
 missingSchemaError.name;
-missingSchemaError.stack;
+/* inherited properties */
 missingSchemaError.message;
+missingSchemaError.stack;
 
 /*
  * section error/divergentArray.js
  * https://mongoosejs.com/docs/api.html#mongooseerror_MongooseError.MissingSchemaError
  */
-var missingSchemaError: mongoose.Error.DivergentArrayError = new mongoose.Error.DivergentArrayError(['foo','bar']);
-/* inherited properties */
+var divergentArrayError: mongoose.Error.DivergentArrayError = new mongoose.Error.DivergentArrayError(['foo','bar']);
 missingSchemaError.name;
-missingSchemaError.stack;
+/* inherited properties */
 missingSchemaError.message;
+missingSchemaError.stack;
 
 const pluralize = mongoose.pluralize();
 const plural: string = pluralize('foo');
@@ -491,12 +479,12 @@ preHookTestSchemaArr.push(
 );
 
 schema
-.post('save', function (error, doc, next) {
+.post('save', function (error: mongoose.Error, doc: mongoose.Document, next: (err?: mongoose.NativeError) => void) {
   error.stack;
   doc.model;
   next.apply;
 })
-.post('save', function (doc: mongoose.Document, next: Function) {
+.post('save', function (doc: mongoose.Document, next: (err?: mongoose.NativeError) => void) {
   doc.model;
   next(new Error());
 })
@@ -520,12 +508,15 @@ mongoose.Schema.reserved.hasOwnProperty('');
 /* inherited properties */
 schema.addListener('e', cb);
 /* practical examples */
-var animalSchema = new mongoose.Schema({
+interface Animal {
+  findSimilarTypes(cb: any): Promise<Animal>
+}
+var animalSchema = new mongoose.Schema<Animal>({
   name: String,
   type: String
 });
-animalSchema.methods.findSimilarTypes = function (cb: any) {
-  return this.model('Aminal').find({ type: this.type }, cb);
+animalSchema.methods.findSimilarTypes = function (cb) {
+  return this.model('Animal').find({ type: this.type }, cb);
 };
 var Animal: any = mongoose.model('Animal', animalSchema);
 var dog: any = new Animal({type: 'dog'});
@@ -721,6 +712,7 @@ doc.execPopulate().then(function (arg) {
 doc.get('path', Number);
 doc.init(doc).init(doc, {});
 doc.inspect();
+doc.invalidate('path', new Error('hi')).toString();
 doc.invalidate('path', new Error('hi'), 999).toString();
 doc.isDirectModified('path').valueOf();
 doc.isInit('path').valueOf();
@@ -808,6 +800,35 @@ ImageModel.findOne({}, function(err, doc) {
     doc.name;
     doc.id;
   }
+});
+/* Using flatten maps example */
+interface Submission extends mongoose.Document {
+  name: string;
+  fields: string[];
+}
+var SubmissionSchema = new mongoose.Schema({
+  name: String,
+  fields: {
+    type: Map,
+    of: String
+  }
+});
+const SubmissionModel = mongoose.model<Submission>('Submission', SubmissionSchema);
+const submission = new SubmissionModel({
+  name: "Submission Name",
+  fields: {
+    extra: "Value",
+    other: "Thing"
+  }
+});
+submission.save()
+.then(result => {
+  console.log(result.toObject({
+    flattenMaps: true
+  }));
+})
+.catch(() => {
+  console.log("Flatten maps error");
 });
 
 /*
@@ -1015,7 +1036,7 @@ query.findOne(function (err, res) {
 query.findOneAndRemove({name: 'aa'}, {
   rawResult: true
 }, function (err, doc) {
-  doc.execPopulate();
+    doc.lastErrorObject
 }).findOneAndRemove();
 query.findOneAndUpdate({name: 'aa'}, {name: 'bb'}, {
 
@@ -1064,6 +1085,7 @@ query.find().lt('age', 21);
 query.find().where('age').lte(21);
 query.find().lte('age', 21);
 query.maxDistance('path', 21).maxDistance(21);
+query.maxTimeMS(1000);
 query.maxscan(100).maxScan(100);
 query.maxScan(100).maxScan(100);
 query.merge(query).merge({});
@@ -1079,6 +1101,7 @@ query.find().where('age').in([20, 21]);
 query.find().in('age', [20, 21]);
 query.nor([{ color: 'green' }, { status: 'ok' }]).nor([]);
 query.or([{ color: 'red' }, { status: 'emergency' }]).or([]);
+query.find({ color: 'blue' }).orFail();
 query.where('loc').within().polygon([10,20], [13, 25], [7,15]);
 query.polygon('loc', [10,20], [13, 25], [7,15]);
 query.findOne().populate('owner').exec(function (err, kitten) {
@@ -1178,6 +1201,12 @@ query.
   sort('-occupation').
   select('name occupation').
   exec(cb).then(cb).catch(cb);
+/**
+ * https://mongoosejs.com/docs/api.html#query_Query-lean
+ */
+query.lean() // true
+query.lean(false)
+query.lean({})
 
 /*
  * section schema/array.js
@@ -1218,6 +1247,8 @@ var documentarray: mongoose.Schema.Types.DocumentArray = new mongoose.Schema.Typ
 mongoose.Schema.Types.DocumentArray.schemaName.toLowerCase();
 /* inherited properties */
 documentarray.sparse(true);
+/* http://thecodebarbarian.com/mongoose-4.8-embedded-discriminators */
+documentarray.discriminator('name', new mongoose.Schema({ foo: String }));
 
 /*
  * section schema/number.js
@@ -1549,6 +1580,18 @@ mongoose.Promise.all;
 mongoose.model('').findOne()
   .exec().then(cb);
 
+function testPromise_all() {
+  interface IUser extends mongoose.Document {
+    name: string;
+  }
+
+  const User = mongoose.model<IUser>('User', new mongoose.Schema({name: String}))
+
+  const dc: mongoose.DocumentQuery<IUser|null, IUser> = User.findOne({});
+  const dc2: PromiseLike<IUser|null> = dc;
+  Promise.all([dc])
+}
+
 /*
  * section model.js
  * http://mongoosejs.com/docs/api.html#model-js
@@ -1627,9 +1670,16 @@ MongoModel.create([{ type: 'jelly bean' }, {
   arg[0].save();
   arg[1].save();
 });
+MongoModel.createCollection().then(() => {});
+MongoModel.createCollection({ capped: true, max: 42 }).then(() => {});
+MongoModel.createCollection({ capped: true, max: 42 }, err => {});
 MongoModel.distinct('url', { clicks: {$gt: 100}}, function (err, result) {
 });
 MongoModel.distinct('url').exec(cb);
+MongoModel.syncIndexes({});
+MongoModel.syncIndexes({}, cb);
+MongoModel.listIndexes();
+MongoModel.listIndexes(cb);
 MongoModel.ensureIndexes({}, cb);
 MongoModel.find({ name: 'john', age: { $gte: 18 }});
 MongoModel.find({ name: 'john', age: { $gte: 18 }}, function (err, docs) {
@@ -1751,6 +1801,11 @@ MongoModel.populate(users, { path: 'weapon' }, function (err, users) {
 });
 MongoModel.remove({ title: 'baby born from alien father' }, cb);
 MongoModel.remove({_id: '999'}).exec().then(cb).catch(cb);
+MongoModel.remove({_id: '999'}).exec().then(res=>console.log(res.ok));
+MongoModel.deleteOne({_id: '999'}).then(res=>console.log(res.ok));
+MongoModel.deleteOne({_id: '999'}).exec().then(res=>console.log(res.ok));
+MongoModel.deleteMany({_id: '999'}).then(res=>console.log('Success?',!!res.ok, 'deleted count', res.n));
+MongoModel.deleteMany({_id: '999'}).exec().then(res=>console.log(res.ok));
 MongoModel.update({ age: { $gt: 18 } }, { oldEnough: true }, cb);
 MongoModel.update({ name: 'Tobi' }, { ferret: true }, { multi: true }, cb);
 MongoModel.where('age').gte(21).lte(65).exec(cb);
@@ -1760,7 +1815,7 @@ mongoModel.baseModelName && mongoModel.baseModelName.toLowerCase();
 mongoModel.collection.$format(99);
 mongoModel.collection.initializeOrderedBulkOp;
 mongoModel.collection.findOne;
-mongoModel.db.openSet('');
+mongoModel.db.openUri('');
 mongoModel.discriminators;
 mongoModel.modelName.toLowerCase();
 MongoModel = mongoModel.base.model('new', mongoModel.schema);
@@ -1881,6 +1936,14 @@ LocModel.findOneAndUpdate().exec().then(function (arg) {
     arg.openingTimes;
   }
 });
+LocModel.findOneAndUpdate(
+    // find a document with that filter
+    {name: "aa"},
+    // document to insert when nothing was found
+    { $set: {name: "bb"} },
+    // options
+    {upsert: true, new: true, runValidators: true,
+        rawResult: true, multipleCastError: true });
 LocModel.geoSearch({}, {
   near: [1, 2],
   maxDistance: 22
@@ -1963,8 +2026,8 @@ const addFieldsAgg: mongoose.Aggregate<any> = aggregatePrototypeGraphLookup.addF
 
 MyModel.findById('foo').then((doc: mongoose.Document) => {
   const a: boolean = doc.isDirectSelected('bar');
-  const b: boolean = doc.isDeleted();
-  doc.isDeleted(true);
+  const b: boolean = doc.$isDeleted();
+  doc.$isDeleted(true);
 });
 
 MyModel.translateAliases({});
@@ -2076,6 +2139,15 @@ new mongoose.Schema({ name: String }, {
     wtimeout: 1000
   }
 });
+
+/**
+ * https://mongoosejs.com/docs/guide.html#shardKey
+ */
+new mongoose.Schema({name: String}, {
+  shardKey: {
+    tag: 1, name: 1
+  }
+})
 
 /* Query helpers: https://mongoosejs.com/docs/guide.html#query-helpers */
 
